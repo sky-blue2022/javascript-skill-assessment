@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Quiz</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="quiz-container">
+      <div id="progress-bar-wrapper">
+        <div id="progress-bar"></div>
+      </div>
+      <h1 id="quiz-title">Quiz</h1>
+      <!-- Quiz Question and Answer Choices -->
+      <div id="quiz-content"></div>
+
+      <!-- Submit Button Section -->
+      <div id="submit-container">
+        <button id="submit-btn">Submit</button>
+      </div>
+
+      <!-- Feedback Section After Submission -->
+      <div id="feedback"></div>
+
+      <!-- Bottom Navigation Buttons -->
+      <div class="quiz-bottom-nav">
+        <button id="prev-btn">Previous</button>
+        <button id="next-btn">Next</button>
+      </div>
+
+      <!-- Back to List -->
+      <a href="index.html">← Back to Quiz List</a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="quiz-data-ch-1.js"></script>
+    <script src="quiz-data-ch-2.js"></script>
+    <script src="quiz-data-ch-3.js"></script>
+    <script src="quiz-data-ch-4.js"></script>
+    <script src="quiz-data-ch-5.js"></script>
+    <script src="quiz-data-ch-6.js"></script>
+    <script src="quiz-data-ch-7.js"></script>
+    <script src="quiz-data-ch-8.js"></script>
+    <script src="quiz-data-ch-9.js"></script>
+    <script src="quiz-data-ch-10.js"></script>
+    <script src="quiz-data-ch-11.js"></script>
+    <script>
+      const quizData = [].concat(quizDataCh1, quizDataCh2); // merge chapters
+    </script>
+    <script src="script.js"></script>
+    <script src="quiz-page.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  </body>
+</html>
