@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assessment Result</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Assessment Result</h1>
+
+      <section id="overall-summary">
+        <h2>Overall Score</h2>
+        <p id="overall-score-text"></p>
+        <div id="overall-score-message" class="score-message"></div>
+        <canvas id="overall-score-chart" height="50"></canvas>
+      </section>
+
+      <section id="section-summary">
+        <h2>Score by Area</h2>
+        <canvas id="chapter-score-chart" height="250"></canvas>
+      </section>
+
+      <section id="recommendation">
+        <h2>Recommended Next Steps</h2>
+        <p>
+          To enhance your JavaScript skills, read
+          <strong>Learn JavaScript Coding with AI</strong>.
+        </p>
+        <div id="weak-sections"></div>
+        <div class="book-rec">
+          <img
+            src="img/IMG_JavaScript-Coding-with-AI-eBook-Cover.png"
+            alt="Book Cover"
+            style="width: 150px; height: auto"
+          />
+          <br />
+          <a href="https://mybook.to/KajHA" target="_blank" class="start-btn"
+            >View on Amazon</a
+          >
+        </div>
+      </section>
+      <a href="index.html" class="back-to-list">← Back to Quiz List</a>
+    </div>
+
+    <script src="quiz-data-ch-1.js"></script>
+    <script src="quiz-data-ch-2.js"></script>
+    <script src="quiz-data-ch-3.js"></script>
+    <script src="quiz-data-ch-4.js"></script>
+    <script src="quiz-data-ch-5.js"></script>
+    <script src="quiz-data-ch-6.js"></script>
+    <script src="quiz-data-ch-7.js"></script>
+    <script src="quiz-data-ch-8.js"></script>
+    <script src="quiz-data-ch-9.js"></script>
+    <script src="quiz-data-ch-10.js"></script>
+    <script src="quiz-data-ch-11.js"></script>
+    <script src="script.js"></script>
+    <script src="chapter-meta.js"></script>
+    <script src="assessment-page.js"></script>
+  </body>
+</html>

@@ -295,3 +295,124 @@ a[href="index.html"] {
     width: 100%;
   }
 }
+
+/* See Result button override */
+.see-result-btn {
+  background-color: #28a745 !important; /* Green */
+  color: #fff !important;
+  font-weight: bold;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+.see-result-btn:hover {
+  background-color: #218838 !important;
+}
+
+/* === DARK MODE EXTENSIONS FOR ASSESSMENT PAGE === */
+
+.quiz-container section {
+  margin-bottom: 2rem;
+}
+
+.quiz-container section h2 {
+  color: #ffffff;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+#chapter-scores {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+}
+
+#chapter-scores li {
+  padding: 0.4rem 0;
+  color: #ccc;
+}
+
+.book-rec {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.book-rec img {
+  border: 0px solid #444;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.book-rec .start-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background-color: #ff9900; /* Amazon-style orange */
+  color: #000000;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.book-rec .start-btn:hover {
+  background-color: #e68a00;
+}
+
+/* Back to List button */
+.back-to-list {
+  display: block;
+  text-align: center;
+  margin: 2rem 0 0;
+  font-weight: 500;
+  color: #4ea1f3;
+}
+
+/* Recommendation Section */
+#recommendation {
+  margin-top: 2rem;
+  font-size: 1.2rem; /* 20% larger than base size */
+  color: #ddd;
+}
+
+#recommendation p {
+  margin-bottom: 0.8rem;
+}
+
+.weak-list {
+  margin-top: 0.5rem;
+  margin-left: 1.5rem; /* ⬅️ Add left margin for indentation */
+  padding-left: 1rem;
+  list-style-type: disc;
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+.weak-list li {
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+
+/* Score Message */
+.score-message {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.score-message.green {
+  color: #2ecc71;
+}
+
+.score-message.orange {
+  color: #f39c12;
+}
+
+.score-message.red {
+  color: #e74c3c;
+}

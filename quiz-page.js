@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     submitBtn.disabled = true;
-    nextBtn.disabled = true; // 🔒 Always lock Next initially
+    nextBtn.disabled = true;
 
     const inputs = quizContent.querySelectorAll("input[name='option']");
     inputs.forEach((input) => {
@@ -78,8 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (previous.correct !== undefined) {
         renderFeedback(previous.selected, previous.correct, false);
-        // ✅ Enable Next if already answered
-        if (qIndex < allQuizData.length - 1) {
+
+        // ✅ Enable "Next" or "See Result" if already answered
+        if (qIndex === allQuizData.length - 1) {
+          nextBtn.textContent = "See Result";
+          nextBtn.classList.add("see-result-btn");
+          nextBtn.onclick = () => (window.location.href = "assessment.html");
+          nextBtn.disabled = false;
+        } else {
+          nextBtn.textContent = "Next";
+          nextBtn.classList.remove("see-result-btn");
+          nextBtn.onclick = () =>
+            (window.location.href = `quiz.html?question=${qIndex + 1}`);
           nextBtn.disabled = false;
         }
       }
@@ -133,8 +143,15 @@ document.addEventListener("DOMContentLoaded", () => {
     saveAnswer(qIndex, selectedValues, isCorrect);
     renderFeedback(selectedValues, isCorrect, true);
 
-    // ✅ Unlock Next after submission
-    if (qIndex < allQuizData.length - 1) {
+    // ✅ After submit: enable "Next" or "See Result"
+    if (qIndex === allQuizData.length - 1) {
+      nextBtn.textContent = "See Result";
+      nextBtn.onclick = () => (window.location.href = "assessment.html");
+      nextBtn.disabled = false;
+    } else {
+      nextBtn.textContent = "Next";
+      nextBtn.onclick = () =>
+        (window.location.href = `quiz.html?question=${qIndex + 1}`);
       nextBtn.disabled = false;
     }
   });
@@ -142,12 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
   prevBtn.addEventListener("click", () => {
     if (qIndex > 0) {
       window.location.href = `quiz.html?question=${qIndex - 1}`;
-    }
-  });
-
-  nextBtn.addEventListener("click", () => {
-    if (qIndex < allQuizData.length - 1) {
-      window.location.href = `quiz.html?question=${qIndex + 1}`;
     }
   });
 

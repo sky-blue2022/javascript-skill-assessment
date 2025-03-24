@@ -10,23 +10,7 @@ clearBtn.addEventListener("click", () => {
 });
 
 // Combine all chapters' data into a single array
-const allQuizData = [
-  { chapter: 1, title: "JavaScript Introduction", data: quizDataCh1 },
-  { chapter: 2, title: "JavaScript Basic Syntax", data: quizDataCh2 },
-  { chapter: 3, title: "Operators in JavaScript", data: quizDataCh3 },
-  { chapter: 4, title: "Control Statements", data: quizDataCh4 },
-  { chapter: 5, title: "Functions in JavaScript", data: quizDataCh5 },
-  { chapter: 6, title: "Objects, Methods, and Classes", data: quizDataCh6 },
-  {
-    chapter: 7,
-    title: "Manipulating Web Pages With Javascript",
-    data: quizDataCh7,
-  },
-  { chapter: 8, title: "Web API And Ajax", data: quizDataCh8 },
-  { chapter: 9, title: "Modules And Libraries", data: quizDataCh9 },
-  { chapter: 10, title: "Browser Storage", data: quizDataCh10 },
-  { chapter: 11, title: "Building Web Applications", data: quizDataCh11 },
-];
+const allQuizData = chapterMeta;
 
 let flatQuizData = [];
 allQuizData.forEach((section) => {
