@@ -129,6 +129,12 @@ new Chart(document.getElementById("chapter-score-chart"), {
   },
   options: {
     indexAxis: "y",
+    responsive: true,
+    layout: {
+      padding: {
+        right: 50, // ✅ Add padding to the right so "100%" has room
+      },
+    },
     scales: {
       x: {
         max: 100,
@@ -154,6 +160,8 @@ new Chart(document.getElementById("chapter-score-chart"), {
           weight: "bold",
           size: 12,
         },
+        clamp: true, // ✅ Keeps label within chart area
+        clip: false, // ✅ Prevents it from being cut off
       },
     },
   },

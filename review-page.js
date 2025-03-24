@@ -3,7 +3,11 @@ const scoreDisplay = document.getElementById("overall-score");
 const clearBtn = document.getElementById("clear-btn");
 
 clearBtn.addEventListener("click", () => {
-  if (confirm("Are you sure you want to clear all saved answers and scores?")) {
+  if (
+    confirm(
+      "Are you sure you want to clear all saved answers and scores? This action is not recoverable."
+    )
+  ) {
     localStorage.removeItem("quiz-progress");
     window.location.reload();
   }
@@ -41,7 +45,7 @@ allQuizData.forEach((section) => {
     questionEl.innerHTML = `
       <span class="status">${status}</span>
       <span class="quiz-title">Q${globalIndex + 1}. ${q.question}</span>
-      <a href="quiz.html?question=${globalIndex}" class="start-btn">Start</a>
+      <a href="quiz.html?question=${globalIndex}" class="start-btn">Review</a>
     `;
 
     quizListContainer.appendChild(questionEl);

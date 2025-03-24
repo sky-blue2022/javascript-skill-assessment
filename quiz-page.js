@@ -100,6 +100,29 @@ document.addEventListener("DOMContentLoaded", () => {
     prevBtn.disabled = qIndex === 0;
   }
 
+  const tooltip = document.getElementById("next-tooltip");
+
+  nextBtn.addEventListener("mouseenter", () => {
+    if (nextBtn.disabled) {
+      tooltip.classList.add("show");
+    }
+  });
+
+  nextBtn.addEventListener("mouseleave", () => {
+    tooltip.classList.remove("show");
+  });
+
+  const submitTooltip = document.getElementById("submit-tooltip");
+
+  submitBtn.addEventListener("mouseenter", () => {
+    if (submitBtn.disabled) {
+      submitTooltip.classList.add("show");
+    }
+  });
+  submitBtn.addEventListener("mouseleave", () => {
+    submitTooltip.classList.remove("show");
+  });
+
   function renderFeedback(selected, isCorrect, showConfetti = false) {
     const sortedKeys = Object.keys(quiz.choices).sort();
     const explanationHtml = sortedKeys
@@ -143,15 +166,21 @@ document.addEventListener("DOMContentLoaded", () => {
     saveAnswer(qIndex, selectedValues, isCorrect);
     renderFeedback(selectedValues, isCorrect, true);
 
-    // ✅ After submit: enable "Next" or "See Result"
+    // ✅ Enable navigation
     if (qIndex === allQuizData.length - 1) {
+      localStorage.setItem("quizCompleted", "true"); // ✅ Set here reliably
       nextBtn.textContent = "See Result";
-      nextBtn.onclick = () => (window.location.href = "assessment.html");
+      nextBtn.classList.add("see-result-btn");
+      nextBtn.onclick = () => {
+        window.location.href = "assessment.html";
+      };
       nextBtn.disabled = false;
     } else {
       nextBtn.textContent = "Next";
-      nextBtn.onclick = () =>
-        (window.location.href = `quiz.html?question=${qIndex + 1}`);
+      nextBtn.classList.remove("see-result-btn");
+      nextBtn.onclick = () => {
+        window.location.href = `quiz.html?question=${qIndex + 1}`;
+      };
       nextBtn.disabled = false;
     }
   });
@@ -171,5 +200,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   renderQuestion();
+  const postLinks = document.getElementById("post-quiz-links");
+  console.log(
+    "localStorage.quizCompleted =",
+    localStorage.getItem("quizCompleted")
+  );
+  if (localStorage.getItem("quizCompleted") === "true") {
+    postLinks.style.display = "block";
+  }
   updateProgressBar();
 });

@@ -17,20 +17,39 @@
 
       <!-- Submit Button Section -->
       <div id="submit-container">
-        <button id="submit-btn">Submit</button>
+        <div class="nav-btn-wrapper">
+          <button id="submit-btn">Submit</button>
+          <div class="tooltip" id="submit-tooltip">
+            Answer first before submission
+          </div>
+        </div>
       </div>
 
-      <!-- Feedback Section After Submission -->
+      <!-- Feedback Section -->
       <div id="feedback"></div>
 
-      <!-- Bottom Navigation Buttons -->
+      <!-- Navigation Buttons -->
       <div class="quiz-bottom-nav">
-        <button id="prev-btn">Previous</button>
-        <button id="next-btn">Next</button>
+        <div class="nav-btn-wrapper">
+          <button id="prev-btn">Previous</button>
+        </div>
+        <div class="nav-btn-wrapper">
+          <button id="next-btn">Next</button>
+          <div class="tooltip" id="next-tooltip">Submit your answer first</div>
+        </div>
       </div>
 
-      <!-- Back to List -->
-      <a href="index.html">← Back to Quiz List</a>
+      <!-- Links to Result pages -->
+      <div
+        id="post-quiz-links"
+        style="display: none; margin-top: 2rem; text-align: center"
+      >
+        <a href="assessment.html" class="post-link"
+          >📊 View Assessment Result</a
+        >
+        |
+        <a href="review.html" class="post-link">🔍 Review All Questions</a>
+      </div>
     </div>
 
     <!-- Scripts -->
