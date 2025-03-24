@@ -1,3 +1,4 @@
+
 const quizListContainer = document.getElementById("quiz-list");
 const scoreDisplay = document.getElementById("overall-score");
 const clearBtn = document.getElementById("clear-btn");
@@ -9,11 +10,13 @@ clearBtn.addEventListener("click", () => {
     )
   ) {
     localStorage.removeItem("quiz-progress");
+    localStorage.removeItem("quizCompleted");
+    localStorage.removeItem("assessmentMode");
     window.location.reload();
   }
 });
 
-// Combine all chapters' data into a single array
+// Load full quiz data
 const allQuizData = chapterMeta;
 
 let flatQuizData = [];
@@ -22,19 +25,35 @@ allQuizData.forEach((section) => {
 });
 
 const progress = getStoredProgress();
-const scoreData = getQuizScore(flatQuizData); // modified to accept full list
-scoreDisplay.textContent = `Score: ${scoreData.percentage}% (${scoreData.correct} correct out of ${scoreData.total})`;
+const assessmentMode = JSON.parse(localStorage.getItem("assessmentMode") || "{}");
+const selectedIndexes = assessmentMode.selectedIndexes || flatQuizData.map((_, i) => i);
 
+// Calculate score
+const filteredData = selectedIndexes.map(i => flatQuizData[i]);
+const correctCount = selectedIndexes.filter(i => progress[i]?.correct).length;
+const totalCount = selectedIndexes.length;
+const percentage = Math.round((correctCount / totalCount) * 100);
+
+scoreDisplay.textContent = `Score: ${percentage}% (${correctCount} correct out of ${totalCount})`;
+
+// Render grouped by chapter
 let globalIndex = 0;
+let selectedSet = new Set(selectedIndexes);
 
 allQuizData.forEach((section) => {
   const chapterTitle = document.createElement("h2");
   chapterTitle.textContent = `${section.title}`;
-  quizListContainer.appendChild(chapterTitle);
+  const chapterBlock = document.createElement("div");
 
   section.data.forEach((q, localIndex) => {
-    const status = progress[globalIndex]
-      ? progress[globalIndex].correct
+    const realIndex = globalIndex;
+    if (!selectedSet.has(realIndex)) {
+      globalIndex++;
+      return;
+    }
+
+    const status = progress[realIndex]
+      ? progress[realIndex].correct
         ? "✅ Correct"
         : "❌ Incorrect"
       : "🟡 Not Answered";
@@ -44,11 +63,33 @@ allQuizData.forEach((section) => {
 
     questionEl.innerHTML = `
       <span class="status">${status}</span>
-      <span class="quiz-title">Q${globalIndex + 1}. ${q.question}</span>
-      <a href="quiz.html?question=${globalIndex}" class="start-btn">Review</a>
+      <span class="quiz-title">Q${selectedIndexes.indexOf(realIndex) + 1}. ${q.question}</span>
+      <a href="quiz.html?question=${selectedIndexes.indexOf(realIndex)}" class="start-btn">Review</a>
     `;
 
-    quizListContainer.appendChild(questionEl);
+    chapterBlock.appendChild(questionEl);
     globalIndex++;
   });
+
+  if (chapterBlock.children.length > 0) {
+    quizListContainer.appendChild(chapterTitle);
+    quizListContainer.appendChild(chapterBlock);
+  }
 });
+
+// === Retake Assessment Button ===
+const retakeBtn = document.createElement("button");
+retakeBtn.textContent = "🔁 Retake Assessment";
+retakeBtn.className = "clear-btn";
+retakeBtn.style.display = "block";
+retakeBtn.style.margin = "2rem auto";
+retakeBtn.onclick = () => {
+  if (confirm("This action will clear all data and restart the assessment. Are you sure?")) {
+    localStorage.removeItem("quiz-progress");
+    localStorage.removeItem("quizCompleted");
+    localStorage.removeItem("assessmentMode");
+    window.location.href = "index.html";
+  }
+};
+
+document.querySelector(".quiz-container")?.appendChild(retakeBtn);

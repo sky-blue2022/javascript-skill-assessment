@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,22 +6,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JavaScript Skill Assessment</title>
     <link rel="stylesheet" href="style.css" />
-  </head>
+</head>
   <body>
     <div class="quiz-container landing-page">
       <h1>JavaScript Skill Assessment</h1>
 
       <p class="landing-description">
-        This assessment tool helps you evaluate your knowledge of JavaScript
-        fundamentals through a series of interactive quizzes. Test your skills
-        and discover which areas you should focus on next.
+        This assessment tool helps you evaluate your knowledge of JavaScript fundamentals through a series of interactive quizzes.
+        Test your skills and discover which areas you should focus on next.
       </p>
 
-      <p class="landing-time">⏱ Estimated Time: ~20 minutes</p>
+      
 
-      <a href="quiz.html?question=0" class="start-btn landing-start-btn"
-        >🚀 Start Assessment</a
-      >
+      <div class="mode-select-box">
+<form id="mode-selection" style="margin-top: 2rem; text-align: center;">
+        <p style="margin-bottom: 1rem;">Choose Assessment Mode:</p>
+        <label><input type="radio" name="mode" value="short" checked /> Short (11 questions ⏱ ~5 minutes)</label><br />
+        <label><input type="radio" name="mode" value="medium" /> Medium (22 questions ⏱ ~10 minutes)</label><br />
+        <label><input type="radio" name="mode" value="full" /> Full (72 questions ⏱ ~30 minutes)</label><br /><br />
+        </form>
+</div>
+<div style="text-align: center; margin-top: 1.5rem;">
+<button type="submit" class="start-btn landing-start-btn" form="mode-selection">🚀 Start Assessment</button>
+</div>
+      </form>
+</div>
     </div>
+
+    <!-- Load quiz data files first -->
+    <script src="quiz-data-ch-1.js"></script>
+    <script src="quiz-data-ch-2.js"></script>
+    <script src="quiz-data-ch-3.js"></script>
+    <script src="quiz-data-ch-4.js"></script>
+    <script src="quiz-data-ch-5.js"></script>
+    <script src="quiz-data-ch-6.js"></script>
+    <script src="quiz-data-ch-7.js"></script>
+    <script src="quiz-data-ch-8.js"></script>
+    <script src="quiz-data-ch-9.js"></script>
+    <script src="quiz-data-ch-10.js"></script>
+    <script src="quiz-data-ch-11.js"></script>
+
+    <!-- Then load chapterMeta -->
+    <script src="chapter-meta.js"></script>
+
+    <!-- Then run selection logic -->
+    <script>
+      function getQuestionIndexesByMode(mode) {
+        const indexes = [];
+        let offset = 0;
+        chapterMeta.forEach((chapter) => {
+          const count = chapter.data.length;
+          if (mode === "short" && count > 0) {
+            indexes.push(offset + Math.floor(Math.random() * count));
+          } else if (mode === "medium") {
+            const picks = new Set();
+            while (picks.size < Math.min(2, count)) {
+              picks.add(offset + Math.floor(Math.random() * count));
+            }
+            indexes.push(...picks);
+          } else if (mode === "full") {
+            for (let i = 0; i < count; i++) {
+              indexes.push(offset + i);
+            }
+          }
+          offset += count;
+        });
+        return indexes;
+      }
+
+      document.getElementById("mode-selection").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const mode = document.querySelector("input[name='mode']:checked").value;
+        const selectedIndexes = getQuestionIndexesByMode(mode);
+        localStorage.setItem("assessmentMode", JSON.stringify({ mode, selectedIndexes }));
+        window.location.href = "quiz.html?question=0";
+      });
+    </script>
   </body>
 </html>

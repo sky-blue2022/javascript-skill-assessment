@@ -1,3 +1,4 @@
+
 function getBarColor(score) {
   if (score <= 30) return "#e74c3c"; // Red
   if (score < 70) return "#f39c12"; // Orange
@@ -18,81 +19,17 @@ const allQuizData = [
   ...quizDataCh11,
 ];
 
+const assessmentMode = JSON.parse(localStorage.getItem("assessmentMode") || "{}");
+const selectedIndexes = assessmentMode.selectedIndexes || allQuizData.map((_, i) => i);
 const progress = getStoredProgress();
 
 // === Overall Score ===
-const total = allQuizData.length;
-const correct = Object.values(progress).filter((q) => q.correct).length;
+const total = selectedIndexes.length;
+const correct = selectedIndexes.filter(i => progress[i]?.correct).length;
 const percentage = Math.round((correct / total) * 100);
 
-document.getElementById(
-  "overall-score-text"
-).textContent = `${percentage}% (${correct} correct out of ${total})`;
-
-new Chart(document.getElementById("overall-score-chart"), {
-  type: "bar",
-  data: {
-    labels: ["Overall"],
-    datasets: [
-      {
-        label: "Score (%)",
-        data: [percentage],
-        backgroundColor: [getBarColor(percentage)],
-        borderRadius: 6,
-      },
-    ],
-  },
-  options: {
-    indexAxis: "y",
-    responsive: true,
-    scales: {
-      x: { max: 100, beginAtZero: true },
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: true },
-      datalabels: {
-        color: "#fff",
-        anchor: "end",
-        align: "right",
-        formatter: (value) => `${value}%`,
-        font: {
-          weight: "bold",
-          size: 12,
-        },
-      },
-    },
-  },
-  plugins: [ChartDataLabels],
-});
-
-// === Score by Chapter (11 groups) ===
-const chapterDataSets = chapterMeta;
-
-const chapterLabels = [];
-const chapterScores = [];
-const weakChapters = [];
-let globalIndex = 0;
-
-chapterDataSets.forEach((chapter) => {
-  const total = chapter.data.length;
-  let correct = 0;
-
-  for (let i = 0; i < total; i++) {
-    if (progress[globalIndex]?.correct) {
-      correct++;
-    }
-    globalIndex++;
-  }
-
-  const percent = Math.round((correct / total) * 100);
-  chapterLabels.push(chapter.title); // Only show "Chapter X"
-  chapterScores.push(percent);
-
-  if (percent < 70) {
-    weakChapters.push({ chapter: chapter.chapter, title: chapter.title });
-  }
-});
+document.getElementById("overall-score-text").textContent =
+  percentage + "% (" + correct + " correct out of " + total + ")";
 
 // Score Message
 const messageEl = document.getElementById("overall-score-message");
@@ -113,27 +50,95 @@ if (percentage <= 30) {
 messageEl.textContent = messageText;
 messageEl.className = `score-message ${messageClass}`;
 
+new Chart(document.getElementById("overall-score-chart"), {
+  type: "bar",
+  data: {
+    labels: ["Overall"],
+    datasets: [{
+      label: "Score (%)",
+      data: [percentage],
+      backgroundColor: [getBarColor(percentage)],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: "y",
+    layout: { padding: { right: 30 } },
+    scales: {
+      x: { max: 100, beginAtZero: true },
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: true },
+      datalabels: {
+        anchor: 'end',
+        align: 'right',
+        formatter: value => value + "%",
+        color: '#fff',
+        font: {
+          weight: 'bold',
+          size: 12
+        },
+        clamp: true,
+        clip: false
+      }
+    }
+  },
+  plugins: [ChartDataLabels]
+});
+
+// === Score by Chapter (Grouped only by selectedIndexes) ===
+const chapterLabels = [];
+const chapterScores = [];
+const weakChapters = [];
+let globalIndex = 0;
+let selectedIndexSet = new Set(selectedIndexes);
+
+chapterMeta.forEach((chapter) => {
+  let chapterTotal = 0;
+  let chapterCorrect = 0;
+
+  for (let i = 0; i < chapter.data.length; i++) {
+    const realIndex = globalIndex;
+    if (selectedIndexSet.has(realIndex)) {
+      chapterTotal++;
+      if (progress[realIndex]?.correct) {
+        chapterCorrect++;
+      }
+    }
+    globalIndex++;
+  }
+
+  if (chapterTotal > 0) {
+    const percent = Math.round((chapterCorrect / chapterTotal) * 100);
+    chapterLabels.push(`${chapter.chapter}: ${chapter.title}`);
+    chapterScores.push(percent);
+
+    if (percent < 70) {
+      weakChapters.push({ chapter: chapter.chapter, title: chapter.title });
+    }
+  }
+});
+
 // Render chapter score chart
 new Chart(document.getElementById("chapter-score-chart"), {
   type: "bar",
   data: {
     labels: chapterLabels,
-    datasets: [
-      {
-        label: "Score (%)",
-        data: chapterScores,
-        backgroundColor: chapterScores.map((score) => getBarColor(score)),
-        borderRadius: 6,
-      },
-    ],
+    datasets: [{
+      label: "Score (%)",
+      data: chapterScores,
+      backgroundColor: chapterScores.map(score => getBarColor(score)),
+      borderRadius: 6
+    }]
   },
   options: {
     indexAxis: "y",
     responsive: true,
     layout: {
       padding: {
-        right: 50, // ✅ Add padding to the right so "100%" has room
-      },
+        right: 50
+      }
     },
     scales: {
       x: {
@@ -160,8 +165,8 @@ new Chart(document.getElementById("chapter-score-chart"), {
           weight: "bold",
           size: 12,
         },
-        clamp: true, // ✅ Keeps label within chart area
-        clip: false, // ✅ Prevents it from being cut off
+        clamp: true,
+        clip: false,
       },
     },
   },
@@ -172,11 +177,9 @@ new Chart(document.getElementById("chapter-score-chart"), {
 const weakEl = document.getElementById("weak-sections");
 if (weakChapters.length > 0) {
   weakEl.innerHTML = `
-      <p>Explore the following chapters:</p>
-      <ul class="weak-list">
-        ${weakChapters
-          .map((ch) => `<li>${ch.chapter}: ${ch.title}</li>`)
-          .join("")}
-      </ul>
-    `;
+    <p>Explore the following chapters:</p>
+    <ul class="weak-list">
+      ${weakChapters.map(ch => `<li>${ch.chapter}: ${ch.title}</li>`).join("")}
+    </ul>
+  `;
 }

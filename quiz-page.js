@@ -1,3 +1,4 @@
+
 const allQuizData = [
   ...quizDataCh1,
   ...quizDataCh2,
@@ -14,7 +15,9 @@ const allQuizData = [
 
 const queryParams = new URLSearchParams(window.location.search);
 const qIndex = parseInt(queryParams.get("question")) || 0;
-const quiz = allQuizData[qIndex];
+const assessmentMode = JSON.parse(localStorage.getItem("assessmentMode") || "{}");
+const selectedIndexes = assessmentMode.selectedIndexes || allQuizData.map((_, i) => i);
+const quiz = allQuizData[selectedIndexes[qIndex]];
 
 document.addEventListener("DOMContentLoaded", () => {
   const quizTitle = document.getElementById("quiz-title");
@@ -68,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const progress = getStoredProgress();
-    const previous = progress[qIndex];
+    const previous = progress[selectedIndexes[qIndex]];
     if (previous) {
       inputs.forEach((input) => {
         if (previous.selected.includes(input.value)) {
@@ -79,8 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (previous.correct !== undefined) {
         renderFeedback(previous.selected, previous.correct, false);
 
-        // ✅ Enable "Next" or "See Result" if already answered
-        if (qIndex === allQuizData.length - 1) {
+        if (qIndex === selectedIndexes.length - 1) {
           nextBtn.textContent = "See Result";
           nextBtn.classList.add("see-result-btn");
           nextBtn.onclick = () => (window.location.href = "assessment.html");
@@ -101,23 +103,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const tooltip = document.getElementById("next-tooltip");
-
   nextBtn.addEventListener("mouseenter", () => {
-    if (nextBtn.disabled) {
-      tooltip.classList.add("show");
-    }
+    if (nextBtn.disabled) tooltip.classList.add("show");
   });
-
   nextBtn.addEventListener("mouseleave", () => {
     tooltip.classList.remove("show");
   });
 
   const submitTooltip = document.getElementById("submit-tooltip");
-
   submitBtn.addEventListener("mouseenter", () => {
-    if (submitBtn.disabled) {
-      submitTooltip.classList.add("show");
-    }
+    if (submitBtn.disabled) submitTooltip.classList.add("show");
   });
   submitBtn.addEventListener("mouseleave", () => {
     submitTooltip.classList.remove("show");
@@ -154,33 +149,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   submitBtn.addEventListener("click", () => {
-    const selectedInputs = document.querySelectorAll(
-      "input[name='option']:checked"
-    );
-    const selectedValues = Array.from(selectedInputs)
-      .map((input) => input.value)
-      .sort();
+    const selectedInputs = document.querySelectorAll("input[name='option']:checked");
+    const selectedValues = Array.from(selectedInputs).map((input) => input.value).sort();
     const correctValues = quiz.correctAnswers.slice().sort();
 
     const isCorrect = selectedValues.join(",") === correctValues.join(",");
-    saveAnswer(qIndex, selectedValues, isCorrect);
+    saveAnswer(selectedIndexes[qIndex], selectedValues, isCorrect);
     renderFeedback(selectedValues, isCorrect, true);
 
-    // ✅ Enable navigation
-    if (qIndex === allQuizData.length - 1) {
-      localStorage.setItem("quizCompleted", "true"); // ✅ Set here reliably
+    if (qIndex === selectedIndexes.length - 1) {
+      localStorage.setItem("quizCompleted", "true");
       nextBtn.textContent = "See Result";
       nextBtn.classList.add("see-result-btn");
-      nextBtn.onclick = () => {
-        window.location.href = "assessment.html";
-      };
+      nextBtn.onclick = () => window.location.href = "assessment.html";
       nextBtn.disabled = false;
     } else {
       nextBtn.textContent = "Next";
       nextBtn.classList.remove("see-result-btn");
-      nextBtn.onclick = () => {
-        window.location.href = `quiz.html?question=${qIndex + 1}`;
-      };
+      nextBtn.onclick = () => window.location.href = `quiz.html?question=${qIndex + 1}`;
       nextBtn.disabled = false;
     }
   });
@@ -194,19 +180,17 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateProgressBar() {
     const progressBar = document.getElementById("progress-bar");
     const progress = getStoredProgress();
-    const answeredCount = Object.keys(progress).length;
-    const percent = Math.round((answeredCount / allQuizData.length) * 100);
+    const answeredCount = selectedIndexes.filter(i => progress[i]).length;
+    const percent = Math.round((answeredCount / selectedIndexes.length) * 100);
     progressBar.style.width = `${percent}%`;
   }
 
   renderQuestion();
+
   const postLinks = document.getElementById("post-quiz-links");
-  console.log(
-    "localStorage.quizCompleted =",
-    localStorage.getItem("quizCompleted")
-  );
   if (localStorage.getItem("quizCompleted") === "true") {
     postLinks.style.display = "block";
   }
+
   updateProgressBar();
 });
